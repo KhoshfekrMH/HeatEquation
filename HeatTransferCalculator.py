@@ -1,5 +1,3 @@
-from typing import Any
-
 import matplotlib.pyplot as plt
 from matplotlib import cm
 import numpy as np
@@ -63,9 +61,9 @@ while unlimitedValue:
     past_U = np.copy(U)
     for i in range(2, S):
         for j in range(2, S):
-            leftover = ((St * ((past_U[i, j - 1] - 2 * past_U[i - 1, j - 1] + past_U[i - 2, j - 1]) / (Sx ** 2) + \
-                             (past_U[i - 1, j] - 2 * past_U[i - 1, j - 1] + past_U[i - 1, j - 2]) / (Sy ** 2)) + \
-                       past_U[i - 1, j - 1]) - U[i - 1, j - 1])
+            leftover = ((St * ((past_U[i, j - 1] - 2 * past_U[i - 1, j - 1] + past_U[i - 2, j - 1]) / (Sx ** 2) +
+                               (past_U[i - 1, j] - 2 * past_U[i - 1, j - 1] + past_U[i - 1, j - 2]) / (Sy ** 2)) +
+                         past_U[i - 1, j - 1]) - U[i - 1, j - 1])
 
             mistaken += np.absolute(leftover)
             U[i - 1, j - 1] += leftover
