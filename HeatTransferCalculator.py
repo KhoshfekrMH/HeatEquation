@@ -1,6 +1,6 @@
 from typing import Any
 
-import matplotlib as plt
+import matplotlib.pyplot as plt
 from matplotlib import cm
 import numpy as np
 import win32api
@@ -19,10 +19,11 @@ Sy = 10
 Dx = 0.1
 Dy = 0.1
 
-X = np.arrange(0, Sx, Dx)
-Y = np.arrange(0, Sy, Dy)
+X = np.arange(0, Sx, Dx)
+Y = np.arange(0, Sy, Dy)
 
-x, y = np.arrange(0, S)
+x = np.arange(0, S)
+y = np.arange(0, S)
 x, y = np.meshgrid(x, y)
 
 # endregion
@@ -40,7 +41,7 @@ U[:S, S - 1] = 1  # ✔
 # region 🟨initial condition🟨
 U[30, 30] = 2000  # ✔
 
-maxOfU = np.man(U)  # ✔
+maxOfU = np.max(U)  # ✔
 
 St = Sx ** 2 / (alpha * 2)
 
@@ -55,7 +56,6 @@ caseScheme = 0
 unlimitedValue = True
 
 list_U = []
-listUWithNp = np.stack(list_U)
 list_wave = []
 
 while unlimitedValue:
@@ -63,10 +63,10 @@ while unlimitedValue:
     past_U = np.copy(U)
     for i in range(2, S):
         for j in range(2, S):
-            leftover: float | Any = (
-                    St * ((past_U[i, j - 1] - 2) * past_U[i - 2, j - 1] + past_U[i - 1, j - 1]) / (Sx ** 2)
-                    + (past_U[i - 1, j] - 2 * past_U[i - 1, j - 2] + past_U[i - 1, j - 1]) / (Sy ** 2)
-                    + past_U[i - 1, j - 1] - U[i - 1, j - 1])
+            leftover = ((St * ((past_U[i, j - 1] - 2 * past_U[i - 1, j - 1] + past_U[i - 2, j - 1]) / (Sx ** 2) + \
+                             (past_U[i - 1, j] - 2 * past_U[i - 1, j - 1] + past_U[i - 1, j - 2]) / (Sy ** 2)) + \
+                       past_U[i - 1, j - 1]) - U[i - 1, j - 1])
+
             mistaken += np.absolute(leftover)
             U[i - 1, j - 1] += leftover
 
@@ -84,8 +84,10 @@ while unlimitedValue:
         print("reach a steady-state in and " + str(numberCount) + " is a time steps")
         break
 
+listUWithNp = np.stack(list_U)
+
 for i in range(listUWithNp.shape[0]):
-    fig, ax = plt.sublots(sublots_kw={"projection": "3d"})
+    fig, ax = plt.subplots(subplot_kw={"projection": "3d"})
 
     wave = ax.plot_surface(x, y, listUWithNp[i, :, :].squeeze(), cmap=cm.coolwarm, antialiased=True)
 
